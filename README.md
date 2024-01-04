@@ -1,6 +1,6 @@
 # BackEnd
 
-BackEnd is a minimal API project built with .NET 8 that serves as the backend for PrmSearchAPI.
+BackEnd is a minimal API project built with .NET 8 that serves as the backend for CinemaAPI.
 
 ## Prerequisites
 
