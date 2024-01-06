@@ -1,4 +1,6 @@
-﻿namespace BackEnd.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BackEnd.Entities
 {
     public sealed class Genero
     {

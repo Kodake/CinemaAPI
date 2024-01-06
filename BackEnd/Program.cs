@@ -1,10 +1,16 @@
-using BackEnd.Entities;
+using BackEnd.Context;
+using BackEnd.Endpoints;
+using BackEnd.Repositories;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 var allowOrigins = builder.Configuration.GetValue<string>("Origins")!;
 
 // Inicio servicios
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer("name=DefaultConnection"));
 
 builder.Services.AddCors(opt =>
 {
@@ -25,6 +31,10 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<IRepositorioGeneros, RepositorioGeneros>();
+
+builder.Services.AddAutoMapper(typeof(Program));
+
 // Fin servicios
 
 var app = builder.Build();
@@ -41,28 +51,6 @@ app.UseOutputCache();
 
 app.MapGet("/", [EnableCors(policyName: "Free")] () => "¡Hola Mundo!");
 
-app.MapGet("/generos", () =>
-{
-    var generos = new List<Genero>
-    {
-        new Genero
-        {
-            Id = 1,
-            Nombre = "Drama"
-        },
-        new Genero
-        {
-            Id = 2,
-            Nombre = "Acción"
-        },
-        new Genero
-        {
-            Id = 3,
-            Nombre = "Comedia"
-        }
-    };
-
-    return generos;
-}).CacheOutput(c => c.Expire(TimeSpan.FromSeconds(15)));
+app.MapGroup("/generos").MapGeneros();
 
 app.Run();
