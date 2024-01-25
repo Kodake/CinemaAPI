@@ -12,15 +12,15 @@ namespace BackEnd.Endpoints
     {
         public static RouteGroupBuilder MapGeneros(this RouteGroupBuilder group)
         {
-            group.MapGet("/", ObtenerGeneros)
-                .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(100)).Tag("generos-get"));
-            group.MapGet("/{id:int}", ObtenerGeneroPorId);
-            group.MapPost("/", CrearGenero);
-            group.MapPut("/{id:int}", ActualizarGenero);
-            group.MapDelete("/{id:int}", BorrarGenero);
+            group.MapGet("/", ObtenerTodos)
+                .CacheOutput(c => c.Expire(TimeSpan.FromMinutes(100)).Tag("generos-get"));
+            group.MapGet("/{id:int}", ObtenerPorId);
+            group.MapPost("/", Crear);
+            group.MapPut("/{id:int}", Actualizar);
+            group.MapDelete("/{id:int}", Borrar);
             return group;
         }
-        static async Task<Ok<List<GeneroDTO>>> ObtenerGeneros(IRepositorioGeneros repositorio, 
+        static async Task<Ok<List<GeneroDTO>>> ObtenerTodos(IRepositorioGeneros repositorio, 
             IMapper mapper)
         {
             var generos = await repositorio.ObtenerTodos();
@@ -28,7 +28,7 @@ namespace BackEnd.Endpoints
             return TypedResults.Ok(generosDTO);
         }
 
-        static async Task<Results<Ok<GeneroDTO>, NotFound>> ObtenerGeneroPorId(IRepositorioGeneros repositorio, 
+        static async Task<Results<Ok<GeneroDTO>, NotFound>> ObtenerPorId(IRepositorioGeneros repositorio, 
             IMapper mapper, int id)
         {
             var genero = await repositorio.ObtenerPorId(id);
@@ -42,7 +42,7 @@ namespace BackEnd.Endpoints
             return TypedResults.Ok(generoDTO);
         }
 
-        static async Task<Created<GeneroDTO>> CrearGenero(CrearGeneroDTO crearGeneroDTO, 
+        static async Task<Created<GeneroDTO>> Crear(CrearGeneroDTO crearGeneroDTO, 
             IRepositorioGeneros repositorio,
             IOutputCacheStore outputCacheStore,
             IMapper mapper)
@@ -54,7 +54,7 @@ namespace BackEnd.Endpoints
             return TypedResults.Created($"/generos/{id}", generoDTO);
         }
 
-        static async Task<Results<NoContent, NotFound>> ActualizarGenero(int id, CrearGeneroDTO crearGeneroDTO,
+        static async Task<Results<NoContent, NotFound>> Actualizar(int id, CrearGeneroDTO crearGeneroDTO,
             IRepositorioGeneros repositorio,
             IOutputCacheStore outputCacheStore,
             IMapper mapper)
@@ -73,7 +73,7 @@ namespace BackEnd.Endpoints
             return TypedResults.NoContent();
         }
 
-        static async Task<Results<NotFound, NoContent>> BorrarGenero(int id, IRepositorioGeneros repositorio,
+        static async Task<Results<NotFound, NoContent>> Borrar(int id, IRepositorioGeneros repositorio,
              IOutputCacheStore outputCacheStore)
         {
             var existe = await repositorio.Existe(id);

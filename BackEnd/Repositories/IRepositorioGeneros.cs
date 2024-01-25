@@ -10,5 +10,6 @@ namespace BackEnd.Repositories
         Task<bool> Existe(int id);
         Task Actualizar(Genero genero);
         Task Borrar(int id);
+        Task<List<int>> Existen(List<int> ids);
     }
 }

@@ -1,11 +1,39 @@
 {
   "Version": 1,
-  "Hash": "cPqfaYa80spAnn83F5ijizHSf4K7X8YH25xJLDw7OM8=",
+  "Hash": "mkVB4WKTKe8M+iEGOulNqCGmv42y6Aw8WSCad3cds/A=",
   "Source": "BackEnd",
   "BasePath": "_content/BackEnd",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
-  "Assets": []
+  "DiscoveryPatterns": [
+    {
+      "Name": "BackEnd\\wwwroot",
+      "Source": "BackEnd",
+      "ContentRoot": "C:\\Users\\Kodake\\Desktop\\BackEnd\\BackEnd\\wwwroot\\",
+      "BasePath": "_content/BackEnd",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "C:\\Users\\Kodake\\Desktop\\BackEnd\\BackEnd\\wwwroot\\actores\\d41164b7-99c0-4fe7-bd06-eba502b906cb.jpg",
+      "SourceId": "BackEnd",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Kodake\\Desktop\\BackEnd\\BackEnd\\wwwroot\\",
+      "BasePath": "_content/BackEnd",
+      "RelativePath": "actores/d41164b7-99c0-4fe7-bd06-eba502b906cb.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\actores\\d41164b7-99c0-4fe7-bd06-eba502b906cb.jpg"
+    }
+  ]
 }
