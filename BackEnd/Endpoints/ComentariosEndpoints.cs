@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BackEnd.DTOs;
 using BackEnd.Entities;
+using BackEnd.Filters;
 using BackEnd.Repositories;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.OutputCaching;
@@ -12,23 +13,22 @@ namespace BackEnd.Endpoints
         public static RouteGroupBuilder MapComentarios(this RouteGroupBuilder group)
         {
             group.MapGet("/", ObtenerTodos)
-                .CacheOutput(c => c.Expire(TimeSpan.FromMinutes(100))
+                .CacheOutput(c =>
+                c.Expire(TimeSpan.FromMinutes(100))
                 .Tag("comentarios-get")
-                .SetVaryByRouteValue(new string[] { "PeliculaId" }));
+                .SetVaryByRouteValue(new string[] { "peliculaId" }));
             group.MapGet("/{id:int}", ObtenerPorId);
-            group.MapPost("/", Crear);
-            group.MapPut("/{id:int}", Actualizar);
+            group.MapPost("/", Crear).AddEndpointFilter<FiltroValidaciones<CrearComentarioDTO>>();
+            group.MapPut("/{id:int}", Actualizar).AddEndpointFilter<FiltroValidaciones<CrearComentarioDTO>>();
             group.MapDelete("/{id:int}", Borrar);
             return group;
         }
 
         static async Task<Results<Ok<List<ComentarioDTO>>, NotFound>> ObtenerTodos(int peliculaId,
-            CrearComentarioDTO crearComentarioDTO, IRepositorioComentarios repositorioComentarios,
-            IRepositorioPeliculas repositorioPeliculas, IMapper mapper)
+            IRepositorioComentarios repositorioComentarios, IRepositorioPeliculas repositorioPeliculas,
+            IMapper mapper)
         {
-            var existe = await repositorioPeliculas.Existe(peliculaId);
-
-            if (!existe)
+            if (!await repositorioPeliculas.Existe(peliculaId))
             {
                 return TypedResults.NotFound();
             }
@@ -39,8 +39,7 @@ namespace BackEnd.Endpoints
         }
 
         static async Task<Results<Ok<ComentarioDTO>, NotFound>> ObtenerPorId(int peliculaId, int id,
-            IRepositorioComentarios repositorio,
-            IMapper mapper)
+            IRepositorioComentarios repositorio, IMapper mapper)
         {
             var comentario = await repositorio.ObtenerPorId(id);
 
@@ -58,9 +57,7 @@ namespace BackEnd.Endpoints
             CrearComentarioDTO crearComentarioDTO, IRepositorioComentarios repositorioComentarios,
             IRepositorioPeliculas repositorioPeliculas, IMapper mapper, IOutputCacheStore outputCacheStore)
         {
-            var existe = await repositorioPeliculas.Existe(peliculaId);
-
-            if (!existe)
+            if (!await repositorioPeliculas.Existe(peliculaId))
             {
                 return TypedResults.NotFound();
             }
@@ -78,16 +75,12 @@ namespace BackEnd.Endpoints
             IRepositorioComentarios repositorioComentarios, IRepositorioPeliculas repositorioPeliculas,
             IMapper mapper)
         {
-            var existePelicula = await repositorioPeliculas.Existe(peliculaId);
-
-            if (!existePelicula)
+            if (!await repositorioPeliculas.Existe(peliculaId))
             {
                 return TypedResults.NotFound();
             }
 
-            var existeComentario = await repositorioComentarios.Existe(id);
-
-            if (!existeComentario)
+            if (!await repositorioComentarios.Existe(id))
             {
                 return TypedResults.NotFound();
             }
@@ -101,13 +94,10 @@ namespace BackEnd.Endpoints
             return TypedResults.NoContent();
         }
 
-        static async Task<Results<NoContent, NotFound>> Borrar(int id,
-            IRepositorioComentarios repositorio,
-            IOutputCacheStore outputCacheStore)
+        static async Task<Results<NoContent, NotFound>> Borrar(int peliculaId, int id,
+            IRepositorioComentarios repositorio, IOutputCacheStore outputCacheStore)
         {
-            var existeComentario = await repositorio.Existe(id);
-
-            if (!existeComentario)
+            if (!await repositorio.Existe(id))
             {
                 return TypedResults.NotFound();
             }

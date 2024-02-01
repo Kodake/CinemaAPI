@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "gjBDwJOv+M2W0y/NQTBHy1tzYNnnkbbWJxri3rVNyRQpATpAyyu8wAsOG5Gs3x8S/nF/4GEy1Qqm8RizAQslCg==",
+  "dgSpecHash": "yaXRndHy/NuOl90/SmxN49LnmEPHZs2IRLa/4bhdH32jBPe5vPS1f3EISH/OJXKVB5VCbM5ivzDg5g5tWHMIMw==",
   "success": true,
   "projectFilePath": "C:\\Users\\Kodake\\Desktop\\BackEnd\\BackEnd\\BackEnd.csproj",
   "expectedPackageFiles": [
@@ -10,6 +10,8 @@
     "C:\\Users\\Kodake\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",
     "C:\\Users\\Kodake\\.nuget\\packages\\azure.storage.blobs\\12.19.1\\azure.storage.blobs.12.19.1.nupkg.sha512",
     "C:\\Users\\Kodake\\.nuget\\packages\\azure.storage.common\\12.18.1\\azure.storage.common.12.18.1.nupkg.sha512",
+    "C:\\Users\\Kodake\\.nuget\\packages\\fluentvalidation\\11.9.0\\fluentvalidation.11.9.0.nupkg.sha512",
+    "C:\\Users\\Kodake\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\11.9.0\\fluentvalidation.dependencyinjectionextensions.11.9.0.nupkg.sha512",
     "C:\\Users\\Kodake\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\Kodake\\.nuget\\packages\\microsoft.aspnetcore.openapi\\8.0.0\\microsoft.aspnetcore.openapi.8.0.0.nupkg.sha512",
     "C:\\Users\\Kodake\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\6.0.0\\microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512",

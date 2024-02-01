@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BackEnd.DTOs;
 using BackEnd.Entities;
+using BackEnd.Filters;
 using BackEnd.Repositories;
 using BackEnd.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -18,8 +19,8 @@ namespace BackEnd.Endpoints
                 .CacheOutput(c => c.Expire(TimeSpan.FromMinutes(100)).Tag("peliculas-get"));
             group.MapGet("/{id:int}", ObtenerPorId);
             group.MapGet("obtenerPorTitulo/{titulo}", ObtenerPorTitulo);
-            group.MapPost("/", Crear).DisableAntiforgery();
-            group.MapPut("/{id:int}", Actualizar).DisableAntiforgery();
+            group.MapPost("/", Crear).DisableAntiforgery().AddEndpointFilter<FiltroValidaciones<CrearPeliculaDTO>>();
+            group.MapPut("/{id:int}", Actualizar).DisableAntiforgery().AddEndpointFilter<FiltroValidaciones<CrearPeliculaDTO>>();
             group.MapDelete("/{id:int}", Borrar);
             group.MapPost("/{id:int}/asignar-generos", AsignarGeneros);
             group.MapPost("/{id:int}/asignar-actores", AsignarActores);

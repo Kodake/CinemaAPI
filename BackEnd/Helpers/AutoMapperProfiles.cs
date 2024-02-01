@@ -2,7 +2,7 @@
 using BackEnd.DTOs;
 using BackEnd.Entities;
 
-namespace BackEnd.Utilities
+namespace BackEnd.Helpers
 {
     public class AutoMapperProfiles : Profile
     {

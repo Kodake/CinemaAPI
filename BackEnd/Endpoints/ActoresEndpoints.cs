@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using BackEnd.DTOs;
 using BackEnd.Entities;
+using BackEnd.Filters;
 using BackEnd.Repositories;
 using BackEnd.Services;
+using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
@@ -18,8 +20,8 @@ namespace BackEnd.Endpoints
                 .CacheOutput(c => c.Expire(TimeSpan.FromMinutes(100)).Tag("actores-get"));
             group.MapGet("/{id:int}", ObtenerPorId);
             group.MapGet("obtenerPorNombre/{nombre}", ObtenerPorNombre);
-            group.MapPost("/", Crear).DisableAntiforgery();
-            group.MapPut("/{id:int}", Actualizar).DisableAntiforgery();
+            group.MapPost("/", Crear).DisableAntiforgery().AddEndpointFilter<FiltroValidaciones<CrearActorDTO>>();
+            group.MapPut("/{id:int}", Actualizar).DisableAntiforgery().AddEndpointFilter<FiltroValidaciones<CrearActorDTO>>();
             group.MapDelete("/{id:int}", Borrar);
             return group;
         }
@@ -56,7 +58,7 @@ namespace BackEnd.Endpoints
             return TypedResults.Ok(actoresDTO);
         }
 
-        static async Task<Created<ActorDTO>> Crear([FromForm] CrearActorDTO crearActorDTO,
+        static async Task<Results<Created<ActorDTO>, ValidationProblem>> Crear([FromForm] CrearActorDTO crearActorDTO,
            IRepositorioActores repositorio,
            IOutputCacheStore outputCacheStore,
            IAlmacenadorArchivos almacenadorArchivos,

@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Runtime.InteropServices;
 
-namespace BackEnd.Utilities
+namespace BackEnd.Helpers
 {
     public static class HttpContextExtensions
     {

@@ -142,3 +142,5 @@ C:\Users\Kodake\Desktop\BackEnd\BackEnd\bin\Debug\net8.0\Azure.Storage.Blobs.dll
 C:\Users\Kodake\Desktop\BackEnd\BackEnd\bin\Debug\net8.0\Azure.Storage.Common.dll
 C:\Users\Kodake\Desktop\BackEnd\BackEnd\bin\Debug\net8.0\System.IO.Hashing.dll
 C:\Users\Kodake\Desktop\BackEnd\BackEnd\bin\Debug\net8.0\BackEnd.staticwebassets.runtime.json
+C:\Users\Kodake\Desktop\BackEnd\BackEnd\bin\Debug\net8.0\FluentValidation.dll
+C:\Users\Kodake\Desktop\BackEnd\BackEnd\bin\Debug\net8.0\FluentValidation.DependencyInjectionExtensions.dll

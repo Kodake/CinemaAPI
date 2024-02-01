@@ -43,6 +43,11 @@ namespace BackEnd.Repositories
             return await context.Generos.AnyAsync(x => x.Id == id);
         }
 
+        public async Task<bool> Existe(int id, string nombre)
+        {
+            return await context.Generos.AnyAsync(x => x.Id != id && x.Nombre == nombre);
+        }
+
         public async Task<List<int>> Existen(List<int> ids)
         {
             return await context.Generos.Where(x => ids.Contains(x.Id)).Select(x => x.Id).ToListAsync();

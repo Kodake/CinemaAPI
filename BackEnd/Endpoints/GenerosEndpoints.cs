@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using BackEnd.DTOs;
 using BackEnd.Entities;
+using BackEnd.Filters;
 using BackEnd.Migrations;
 using BackEnd.Repositories;
+using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.OutputCaching;
+using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.Endpoints
 {
@@ -15,8 +18,8 @@ namespace BackEnd.Endpoints
             group.MapGet("/", ObtenerTodos)
                 .CacheOutput(c => c.Expire(TimeSpan.FromMinutes(100)).Tag("generos-get"));
             group.MapGet("/{id:int}", ObtenerPorId);
-            group.MapPost("/", Crear);
-            group.MapPut("/{id:int}", Actualizar);
+            group.MapPost("/", Crear).AddEndpointFilter<FiltroValidaciones<CrearGeneroDTO>>();
+            group.MapPut("/{id:int}", Actualizar).AddEndpointFilter<FiltroValidaciones<CrearGeneroDTO>>();
             group.MapDelete("/{id:int}", Borrar);
             return group;
         }
@@ -42,7 +45,7 @@ namespace BackEnd.Endpoints
             return TypedResults.Ok(generoDTO);
         }
 
-        static async Task<Created<GeneroDTO>> Crear(CrearGeneroDTO crearGeneroDTO, 
+        static async Task<Results<Created<GeneroDTO>, ValidationProblem>> Crear(CrearGeneroDTO crearGeneroDTO, 
             IRepositorioGeneros repositorio,
             IOutputCacheStore outputCacheStore,
             IMapper mapper)
@@ -54,7 +57,7 @@ namespace BackEnd.Endpoints
             return TypedResults.Created($"/generos/{id}", generoDTO);
         }
 
-        static async Task<Results<NoContent, NotFound>> Actualizar(int id, CrearGeneroDTO crearGeneroDTO,
+        static async Task<Results<NoContent, NotFound, ValidationProblem>> Actualizar(int id, CrearGeneroDTO crearGeneroDTO,
             IRepositorioGeneros repositorio,
             IOutputCacheStore outputCacheStore,
             IMapper mapper)

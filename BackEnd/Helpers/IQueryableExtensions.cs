@@ -1,6 +1,6 @@
 ﻿using BackEnd.DTOs;
 
-namespace BackEnd.Utilities
+namespace BackEnd.Helpers
 {
     public static class IQueryableExtensions
     {
