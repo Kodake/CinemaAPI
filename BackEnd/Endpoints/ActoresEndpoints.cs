@@ -16,13 +16,17 @@ namespace BackEnd.Endpoints
         private static readonly string contenedor = "actores";
         public static RouteGroupBuilder MapActores(this RouteGroupBuilder group)
         {
-            group.MapGet("/", ObtenerTodos)
-                .CacheOutput(c => c.Expire(TimeSpan.FromMinutes(100)).Tag("actores-get"));
+            group.MapGet("/", ObtenerTodos).CacheOutput(c => c.Expire(TimeSpan.FromSeconds(60)).Tag("actores-get"));
             group.MapGet("/{id:int}", ObtenerPorId);
             group.MapGet("obtenerPorNombre/{nombre}", ObtenerPorNombre);
-            group.MapPost("/", Crear).DisableAntiforgery().AddEndpointFilter<FiltroValidaciones<CrearActorDTO>>();
-            group.MapPut("/{id:int}", Actualizar).DisableAntiforgery().AddEndpointFilter<FiltroValidaciones<CrearActorDTO>>();
-            group.MapDelete("/{id:int}", Borrar);
+            group.MapPost("/", Crear).DisableAntiforgery()
+                .AddEndpointFilter<FiltroValidaciones<CrearActorDTO>>()
+                .RequireAuthorization("esadmin");
+            group.MapPut("/{id:int}", Actualizar)
+                .DisableAntiforgery()
+                .AddEndpointFilter<FiltroValidaciones<CrearActorDTO>>()
+                 .RequireAuthorization("esadmin");
+            group.MapDelete("/{id:int}", Borrar).RequireAuthorization("esadmin");
             return group;
         }
 

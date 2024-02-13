@@ -2,12 +2,9 @@
 using BackEnd.DTOs;
 using BackEnd.Entities;
 using BackEnd.Filters;
-using BackEnd.Migrations;
 using BackEnd.Repositories;
-using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.OutputCaching;
-using System.ComponentModel.DataAnnotations;
 
 namespace BackEnd.Endpoints
 {
@@ -18,12 +15,13 @@ namespace BackEnd.Endpoints
             group.MapGet("/", ObtenerTodos)
                 .CacheOutput(c => c.Expire(TimeSpan.FromMinutes(100)).Tag("generos-get"));
             group.MapGet("/{id:int}", ObtenerPorId);
-            group.MapPost("/", Crear).AddEndpointFilter<FiltroValidaciones<CrearGeneroDTO>>();
-            group.MapPut("/{id:int}", Actualizar).AddEndpointFilter<FiltroValidaciones<CrearGeneroDTO>>();
-            group.MapDelete("/{id:int}", Borrar);
+            group.MapPost("/", Crear).AddEndpointFilter<FiltroValidaciones<CrearGeneroDTO>>().RequireAuthorization("esadmin");
+            group.MapPut("/{id:int}", Actualizar).AddEndpointFilter<FiltroValidaciones<CrearGeneroDTO>>().RequireAuthorization("esadmin");
+            group.MapDelete("/{id:int}", Borrar).RequireAuthorization("esadmin");
             return group;
         }
-        static async Task<Ok<List<GeneroDTO>>> ObtenerTodos(IRepositorioGeneros repositorio, 
+
+        static async Task<Ok<List<GeneroDTO>>> ObtenerTodos(IRepositorioGeneros repositorio,
             IMapper mapper)
         {
             var generos = await repositorio.ObtenerTodos();
@@ -31,7 +29,7 @@ namespace BackEnd.Endpoints
             return TypedResults.Ok(generosDTO);
         }
 
-        static async Task<Results<Ok<GeneroDTO>, NotFound>> ObtenerPorId(IRepositorioGeneros repositorio, 
+        static async Task<Results<Ok<GeneroDTO>, NotFound>> ObtenerPorId(IRepositorioGeneros repositorio,
             IMapper mapper, int id)
         {
             var genero = await repositorio.ObtenerPorId(id);
@@ -45,7 +43,7 @@ namespace BackEnd.Endpoints
             return TypedResults.Ok(generoDTO);
         }
 
-        static async Task<Results<Created<GeneroDTO>, ValidationProblem>> Crear(CrearGeneroDTO crearGeneroDTO, 
+        static async Task<Results<Created<GeneroDTO>, ValidationProblem>> Crear(CrearGeneroDTO crearGeneroDTO,
             IRepositorioGeneros repositorio,
             IOutputCacheStore outputCacheStore,
             IMapper mapper)
@@ -53,7 +51,7 @@ namespace BackEnd.Endpoints
             var genero = mapper.Map<Genero>(crearGeneroDTO);
             var id = await repositorio.Crear(genero);
             await outputCacheStore.EvictByTagAsync("generos-get", default);
-            var generoDTO = mapper.Map<GeneroDTO>(genero); 
+            var generoDTO = mapper.Map<GeneroDTO>(genero);
             return TypedResults.Created($"/generos/{id}", generoDTO);
         }
 
@@ -90,6 +88,5 @@ namespace BackEnd.Endpoints
             await outputCacheStore.EvictByTagAsync("generos-get", default);
             return TypedResults.NoContent();
         }
-
     }
 }

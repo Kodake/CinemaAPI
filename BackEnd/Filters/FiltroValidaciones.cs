@@ -6,25 +6,25 @@ namespace BackEnd.Filters
     {
         public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
         {
-            var validator = context.HttpContext.RequestServices.GetService<IValidator<T>>();
+            var validador = context.HttpContext.RequestServices.GetService<IValidator<T>>();
 
-            if (validator is null)
+            if (validador is null)
             {
                 return await next(context);
             }
 
-            var dto = context.Arguments.OfType<T>().FirstOrDefault();
+            var insumoAValidar = context.Arguments.OfType<T>().FirstOrDefault();
 
-            if (dto is null)
+            if (insumoAValidar is null)
             {
-                return TypedResults.Problem("No se pudo encontrar la entidad a validar");
+                return TypedResults.Problem("No pudo ser encontrada la entidad a validar");
             }
 
-            var validationResult = await validator.ValidateAsync(dto);
+            var resultadoValidacion = await validador.ValidateAsync(insumoAValidar);
 
-            if (!validationResult.IsValid)
+            if (!resultadoValidacion.IsValid)
             {
-                return TypedResults.ValidationProblem(validationResult.ToDictionary());
+                return TypedResults.ValidationProblem(resultadoValidacion.ToDictionary());
             }
 
             return await next(context);

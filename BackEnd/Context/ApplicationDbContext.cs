@@ -1,9 +1,11 @@
 ﻿using BackEnd.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace BackEnd.Context
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext
     {
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
@@ -24,6 +26,13 @@ namespace BackEnd.Context
             modelBuilder.Entity<GeneroPelicula>().HasKey(g => new { g.GeneroId, g.PeliculaId });
 
             modelBuilder.Entity<ActorPelicula>().HasKey(g => new { g.PeliculaId, g.ActorId });
+
+            modelBuilder.Entity<IdentityUser>().ToTable("Usuarios");
+            modelBuilder.Entity<IdentityRole>().ToTable("Roles");
+            modelBuilder.Entity<IdentityRoleClaim<string>>().ToTable("UsuariosClaims");
+            modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("UsuariosLogins");
+            modelBuilder.Entity<IdentityUserRole<string>>().ToTable("UsuariosRoles");
+            modelBuilder.Entity<IdentityUserToken<string>>().ToTable("UsuariosTokens");
         }
 
         public DbSet<Genero> Generos { get; set; }
