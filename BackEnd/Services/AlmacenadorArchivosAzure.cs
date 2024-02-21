@@ -1,6 +1,6 @@
-﻿
-using Azure.Storage.Blobs;
+﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Path = System.IO.Path;
 
 namespace BackEnd.Services
 {

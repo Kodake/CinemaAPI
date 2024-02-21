@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Error = BackEnd.Entities.Error;
 
 namespace BackEnd.Context
 {
@@ -29,7 +30,8 @@ namespace BackEnd.Context
 
             modelBuilder.Entity<IdentityUser>().ToTable("Usuarios");
             modelBuilder.Entity<IdentityRole>().ToTable("Roles");
-            modelBuilder.Entity<IdentityRoleClaim<string>>().ToTable("UsuariosClaims");
+            modelBuilder.Entity<IdentityRoleClaim<string>>().ToTable("RolesClaims");
+            modelBuilder.Entity<IdentityUserClaim<string>>().ToTable("UsuariosClaims");
             modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("UsuariosLogins");
             modelBuilder.Entity<IdentityUserRole<string>>().ToTable("UsuariosRoles");
             modelBuilder.Entity<IdentityUserToken<string>>().ToTable("UsuariosTokens");

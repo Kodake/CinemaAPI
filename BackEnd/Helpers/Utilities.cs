@@ -12,7 +12,6 @@
             return "El campo {PropertyName} debe ser posterior a " + fechaMinima.ToString("yyyy-MM-dd");
         }
 
-
         public static bool PrimerLetraEnMayusculas(string valor)
         {
             if (string.IsNullOrWhiteSpace(valor))

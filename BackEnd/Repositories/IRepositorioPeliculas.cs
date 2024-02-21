@@ -14,5 +14,6 @@ namespace BackEnd.Repositories
         Task<Pelicula?> ObtenerPorId(int id);
         Task<List<Pelicula>> ObtenerPorTitulo(string titulo);
         Task<List<Pelicula>> ObtenerTodos(PaginacionDTO paginacionDTO);
+        Task<List<Pelicula>> Filtrar(PeliculasFiltrarDTO peliculasFiltrarDTO);
     }
 }

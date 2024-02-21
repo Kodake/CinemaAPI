@@ -92,7 +92,7 @@ namespace BackEnd.Endpoints
         static async Task<Results<NoContent, NotFound, ForbidHttpResult>> Actualizar(int peliculaId, int id,
             CrearComentarioDTO crearComentarioDTO, IOutputCacheStore outputCacheStore,
             IRepositorioComentarios repositorioComentarios, IRepositorioPeliculas repositorioPeliculas,
-            UsuariosServices usuariosServices)
+            IUsuariosServices usuariosServices)
         {
             if (!await repositorioPeliculas.Existe(peliculaId))
             {

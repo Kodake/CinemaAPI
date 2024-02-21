@@ -1,9 +1,14 @@
-﻿namespace BackEnd.DTOs
+﻿using BackEnd.Helpers;
+using Microsoft.IdentityModel.Tokens;
+
+namespace BackEnd.DTOs
 {
     public class PaginacionDTO
     {
-        public int Pagina { get; set; } = 1;
-        private int recordsPorPagina = 10;
+        private const int paginaValorInicial = 1;
+        private const int recordsPorPaginaValorInicial = 10;
+        public int Pagina { get; set; } = paginaValorInicial;
+        private int recordsPorPagina = recordsPorPaginaValorInicial;
         private readonly int cantidadMaximaRecordsPorPagina = 50;
 
         public int RecordsPorPagina
@@ -19,5 +24,18 @@
             }
         }
 
+        public static ValueTask<PaginacionDTO> BindAsync(HttpContext context)
+        {
+            var pagina = context.ExtraerValorODefecto(nameof(Pagina), paginaValorInicial);
+            var recordsPorPagina = context.ExtraerValorODefecto(nameof(RecordsPorPagina), recordsPorPaginaValorInicial);
+
+            var resultado = new PaginacionDTO
+            {
+                Pagina = pagina,
+                RecordsPorPagina = recordsPorPagina
+            };
+
+            return ValueTask.FromResult(resultado);
+        }
     }
 }

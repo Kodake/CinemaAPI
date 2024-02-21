@@ -1,6 +1,6 @@
 using BackEnd.Context;
 using BackEnd.Endpoints;
-using BackEnd.Entities;
+using BackEnd.GraphQL;
 using BackEnd.Helpers;
 using BackEnd.Repositories;
 using BackEnd.Services;
@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Error = BackEnd.Entities.Error;
 
 var builder = WebApplication.CreateBuilder(args);
 var origenesPermitidos = builder.Configuration.GetValue<string>("Origins")!;
@@ -17,6 +19,14 @@ var origenesPermitidos = builder.Configuration.GetValue<string>("Origins")!;
 
 builder.Services.AddDbContext<ApplicationDbContext>(opciones =>
     opciones.UseSqlServer("name=DefaultConnection"));
+
+builder.Services.AddGraphQLServer()
+    .AddQueryType<Query>()
+    .AddMutationType<Mutation>()
+    .AddAuthorization()
+    .AddProjections()
+    .AddFiltering()
+    .AddSorting();
 
 builder.Services.AddIdentityCore<IdentityUser>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -38,9 +48,44 @@ builder.Services.AddCors(opciones =>
     });
 });
 
-builder.Services.AddOutputCache();
+//builder.Services.AddOutputCache();
+
+builder.Services.AddStackExchangeRedisOutputCache(opciones =>
+{
+    opciones.Configuration = builder.Configuration.GetConnectionString("Redis");
+});
+
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "CinemaAPI",
+        Description = "This is an API to work with movies information",
+        Contact = new OpenApiContact
+        {
+            Email = "kodake@hotmail.es",
+            Name = "Kodake",
+            Url = new Uri("https://github.com/Kodake")
+        },
+        License = new OpenApiLicense
+        {
+            Name = "MIT",
+            Url = new Uri("https://opensource.org/license/mit/")
+        }
+    });
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header
+    });
+
+    c.OperationFilter<AuthorizationFilter>();
+});
 
 builder.Services.AddScoped<IRepositorioGeneros, RepositorioGeneros>();
 builder.Services.AddScoped<IRepositorioActores, RepositorioActores>();
@@ -76,7 +121,7 @@ builder.Services.AddAuthentication().AddJwtBearer(opciones =>
 });
 builder.Services.AddAuthorization(opciones =>
 {
-    opciones.AddPolicy("esadmin", politica => politica.RequireClaim("esadmin"));
+    opciones.AddPolicy("isAdmin", politica => politica.RequireClaim("isAdmin"));
 });
 
 // Fin de área de los servicios
@@ -113,6 +158,8 @@ app.UseCors();
 app.UseOutputCache();
 
 app.UseAuthorization();
+
+app.MapGraphQL();
 
 app.MapGet("/", [EnableCors(policyName: "libre")] () => "¡Hola, mundo!");
 app.MapGet("/error", () =>

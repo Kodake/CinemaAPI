@@ -13,33 +13,41 @@ namespace BackEnd.Endpoints
         public static RouteGroupBuilder MapGeneros(this RouteGroupBuilder group)
         {
             group.MapGet("/", ObtenerTodos)
-                .CacheOutput(c => c.Expire(TimeSpan.FromMinutes(100)).Tag("generos-get"));
+                .CacheOutput(c => c.Expire(TimeSpan.FromMinutes(100)).Tag("generos-get"))
+                .WithOpenApi(opt =>
+                {
+                    opt.Summary = "Obtener todos los géneros";
+                    opt.Description = "Con este endpoint se obtienen todos los géneros";
+                    return opt;
+                });
             group.MapGet("/{id:int}", ObtenerPorId);
-            group.MapPost("/", Crear).AddEndpointFilter<FiltroValidaciones<CrearGeneroDTO>>().RequireAuthorization("esadmin");
-            group.MapPut("/{id:int}", Actualizar).AddEndpointFilter<FiltroValidaciones<CrearGeneroDTO>>().RequireAuthorization("esadmin");
-            group.MapDelete("/{id:int}", Borrar).RequireAuthorization("esadmin");
+            group.MapPost("/", Crear).AddEndpointFilter<FiltroValidaciones<CrearGeneroDTO>>().RequireAuthorization("isAdmin");
+            group.MapPut("/{id:int}", Actualizar).AddEndpointFilter<FiltroValidaciones<CrearGeneroDTO>>().RequireAuthorization("isAdmin");
+            group.MapDelete("/{id:int}", Borrar).RequireAuthorization("isAdmin");
             return group;
         }
 
         static async Task<Ok<List<GeneroDTO>>> ObtenerTodos(IRepositorioGeneros repositorio,
-            IMapper mapper)
+            IMapper mapper, ILoggerFactory loggerFactory)
         {
+            var tipo = typeof(GenerosEndpoints);
+            var logger = loggerFactory.CreateLogger(tipo.FullName!);
+            logger.LogInformation("Obteniendo el listado de géneros");
             var generos = await repositorio.ObtenerTodos();
             var generosDTO = mapper.Map<List<GeneroDTO>>(generos);
             return TypedResults.Ok(generosDTO);
         }
 
-        static async Task<Results<Ok<GeneroDTO>, NotFound>> ObtenerPorId(IRepositorioGeneros repositorio,
-            IMapper mapper, int id)
+        static async Task<Results<Ok<GeneroDTO>, NotFound>> ObtenerPorId([AsParameters] ObtenerGeneroPorIdPeticionDTO modelo)
         {
-            var genero = await repositorio.ObtenerPorId(id);
+            var genero = await modelo.Repositorio.ObtenerPorId(modelo.Id);
 
             if (genero is null)
             {
                 return TypedResults.NotFound();
             }
 
-            var generoDTO = mapper.Map<GeneroDTO>(genero);
+            var generoDTO = modelo.Mapper.Map<GeneroDTO>(genero);
             return TypedResults.Ok(generoDTO);
         }
 

@@ -21,15 +21,15 @@ namespace BackEnd.Endpoints
             group.MapPost("/login", Login)
                .AddEndpointFilter<FiltroValidaciones<CredencialesUsuarioDTO>>();
 
-            group.MapPost("/haceradmin", MakeAdmin)
+            group.MapPost("/make-admin", MakeAdmin)
                 .AddEndpointFilter<FiltroValidaciones<EditarClaimDTO>>()
-             .RequireAuthorization("esadmin");
+             .RequireAuthorization("isAdmin");
 
-            group.MapPost("/removeradmin", RemoveAdmin)
+            group.MapPost("/remove-admin", RemoveAdmin)
                .AddEndpointFilter<FiltroValidaciones<EditarClaimDTO>>()
-               .RequireAuthorization("esadmin");
+               .RequireAuthorization("isAdmin");
 
-            group.MapGet("/renovartoken", RenovarToken).RequireAuthorization();
+            group.MapGet("/renew-token", RenovarToken).RequireAuthorization();
 
             return group;
         }
@@ -94,7 +94,7 @@ namespace BackEnd.Endpoints
                 return TypedResults.NotFound();
             }
 
-            await userManager.AddClaimAsync(usuario, new Claim("esadmin", "true"));
+            await userManager.AddClaimAsync(usuario, new Claim("isAdmin", "true"));
             return TypedResults.NoContent();
         }
 
@@ -108,7 +108,7 @@ namespace BackEnd.Endpoints
                 return TypedResults.NotFound();
             }
 
-            await userManager.RemoveClaimAsync(usuario, new Claim("esadmin", "true"));
+            await userManager.RemoveClaimAsync(usuario, new Claim("isAdmin", "true"));
             return TypedResults.NoContent();
         }
 

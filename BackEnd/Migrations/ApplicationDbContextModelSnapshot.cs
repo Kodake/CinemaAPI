@@ -228,7 +228,7 @@ namespace BackEnd.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("UsuariosClaims", (string)null);
+                    b.ToTable("RolesClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
@@ -318,7 +318,7 @@ namespace BackEnd.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserClaims", (string)null);
+                    b.ToTable("UsuariosClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>

@@ -2,6 +2,7 @@
 using BackEnd.DTOs;
 using BackEnd.Entities;
 using BackEnd.Filters;
+using BackEnd.Helpers;
 using BackEnd.Repositories;
 using BackEnd.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -15,22 +16,29 @@ namespace BackEnd.Endpoints
         private static readonly string contenedor = "peliculas";
         public static RouteGroupBuilder MapPeliculas(this RouteGroupBuilder group)
         {
-            group.MapGet("/", ObtenerTodos).CacheOutput(c => c.Expire(TimeSpan.FromSeconds(60)).Tag("peliculas-get"));
+            group.MapGet("/", ObtenerTodos).CacheOutput(c => c.Expire(TimeSpan.FromSeconds(60)).Tag("peliculas-get"))
+                .AgregarParametrosPaginacionOpenAPI();
             group.MapGet("/{id:int}", ObtenerPorId);
             group.MapPost("/", Crear).DisableAntiforgery()
-                .AddEndpointFilter<FiltroValidaciones<CrearPeliculaDTO>>().RequireAuthorization("esadmin");
+                .AddEndpointFilter<FiltroValidaciones<CrearPeliculaDTO>>()
+                .RequireAuthorization("isAdmin")
+                .WithOpenApi();
             group.MapPut("/{id:int}", Actualizar).DisableAntiforgery()
-                .AddEndpointFilter<FiltroValidaciones<CrearPeliculaDTO>>().RequireAuthorization("esadmin");
-            group.MapDelete("/{id:int}", Borrar).RequireAuthorization("esadmin");
-            group.MapPost("/{id:int}/asignargeneros", AsignarGeneros).RequireAuthorization("esadmin");
-            group.MapPost("/{id:int}/asignaractores", AsignarActores).RequireAuthorization("esadmin");
+                .AddEndpointFilter<FiltroValidaciones<CrearPeliculaDTO>>()
+                .RequireAuthorization("isAdmin")
+                .WithOpenApi();
+            group.MapDelete("/{id:int}", Borrar).RequireAuthorization("isAdmin");
+            group.MapPost("/{id:int}/asignar-generos", AsignarGeneros).RequireAuthorization("isAdmin");
+            group.MapPost("/{id:int}/asignar-actores", AsignarActores).RequireAuthorization("isAdmin");
+            group.MapGet("/filtrar", FiltrarPeliculas)
+                .AgregarParametrosPeliculasFiltroOpenAPI();
             return group;
         }
 
         static async Task<Ok<List<PeliculaDTO>>> ObtenerTodos(IRepositorioPeliculas repositorio,
-            IMapper mapper, int pagina = 1, int recordsPorPagina = 10)
+            IMapper mapper, PaginacionDTO paginacion)
         {
-            var paginacion = new PaginacionDTO { Pagina = pagina, RecordsPorPagina = recordsPorPagina };
+            //var paginacion = new PaginacionDTO { Pagina = pagina, RecordsPorPagina = recordsPorPagina };
             var peliculas = await repositorio.ObtenerTodos(paginacion);
             var peliculasDTO = mapper.Map<List<PeliculaDTO>>(peliculas);
             return TypedResults.Ok(peliculasDTO);
@@ -182,6 +190,14 @@ namespace BackEnd.Endpoints
 
             await repositorioPeliculas.AsignarActores(id, actores);
             return TypedResults.NoContent();
+        }
+
+        static async Task<Ok<List<PeliculaDTO>>> FiltrarPeliculas(PeliculasFiltrarDTO peliculasFiltrarDTO,
+            IRepositorioPeliculas repositorio, IMapper mapper)
+        {
+            var peliculas = await repositorio.Filtrar(peliculasFiltrarDTO);
+            var peliculasDTO = mapper.Map<List<PeliculaDTO>>(peliculas);
+            return TypedResults.Ok(peliculasDTO);
         }
     }
 }

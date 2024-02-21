@@ -1,5 +1,5 @@
 ﻿using BackEnd.Context;
-using BackEnd.Entities;
+using Error = BackEnd.Entities.Error;
 
 namespace BackEnd.Repositories
 {
